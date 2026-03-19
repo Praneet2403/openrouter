@@ -40,6 +40,23 @@ export namespace ApiKeyModel {
 
 
 
+    //response schema for getting all api keys
+    export const getApiKeyResponseSchema = t.Object({
+        name: t.String(),
+        apiKey: t.String(),
+        lastUsed: t.String(),
+        creditsConsumed : t.String(),
+        
+    })
+    export type getApiKeyResponseSchema = typeof getApiKeyResponseSchema.static
+
+
+
+    //response schema for deleting an api key
+    export const deleteApiKeyResponseSchema = t.Object({
+        message : t.Literal("api key deleted successfully")
+    })
+    export type deleteApiKeyResponseSchema = typeof deleteApiKeyResponseSchema.static
     
     
 }

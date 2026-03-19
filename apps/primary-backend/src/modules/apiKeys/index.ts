@@ -1,5 +1,7 @@
 import jwt from "@elysiajs/jwt";
 import Elysia from "elysia";
+import { ApiKeyModel } from "./models";
+import { ApiKeyService } from "./service";
 
 
 //prefix is written so that we dont have to write it everytime we define a route
@@ -31,8 +33,17 @@ export const app = new Elysia({prefix : "api-keys"})
 
     })
     //to create a new api key
-    .post("/" , ({userId , body}) => {
-
+    .post("/" , async ({userId , body}) => {
+        const {apiKey , id} = await ApiKeyService.createApiKey(userId , Number(body.name));
+        return {
+            apiKey,
+            id,
+        }
+    }, {
+        body : ApiKeyModel.createApiKeySchema,
+        response : {
+            200 : ApiKeyModel.createApikeyResponse,
+        }
     })
     // to get all api keys
     .get("/" , ()=> {
