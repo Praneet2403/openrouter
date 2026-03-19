@@ -15,7 +15,7 @@ export namespace AuthModel {
   export type SigninResponseSchema = typeof signinResponseSchema.static;
 
   export const signinFailureSchema = t.Object({
-    message: t.Literal("Error while signing in"),
+    message: t.Literal("Invalid credentials"),
   });
 
     export type signinFailureSchema = typeof signinFailureSchema.static

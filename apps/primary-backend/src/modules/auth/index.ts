@@ -7,7 +7,7 @@ export const app = new Elysia({ prefix: "auth" })
 
     .use(
       jwt({
-        name: "auth",
+        name: "jwt",
         secret: process.env.JWT_SECRET!,
       })
     )
@@ -42,11 +42,11 @@ export const app = new Elysia({ prefix: "auth" })
       const {correctCredentials , userId} = await AuthService.signin(body.email, body.password);
       if(correctCredentials && userId) {
 
-        const value =  await jwt.sign({
-          id: userId,
+        const token =  await jwt.sign({
+          userId,
         })
         auth.set({
-          value: userId,
+          value: token,
           httpOnly: true,
           maxAge: 886400 * 7,
         })
@@ -62,7 +62,7 @@ export const app = new Elysia({ prefix: "auth" })
       body: AuthModel.signinSchema,
       response: {
         200: AuthModel.signinResponseSchema,
-        400: AuthModel.signinFailureSchema,
+        403: AuthModel.signinFailureSchema,
       },
     },
   );
