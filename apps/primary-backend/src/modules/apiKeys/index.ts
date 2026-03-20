@@ -45,7 +45,7 @@ export const app = new Elysia({prefix : "api-keys"})
             200 : ApiKeyModel.createApikeyResponse,
         }
     })
-    // to get all api keys
+    // to get all api keyss
     .get("/" , ()=> {
 
     })
