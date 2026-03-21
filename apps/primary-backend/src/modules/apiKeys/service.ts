@@ -4,7 +4,6 @@ const ALPHABET_SET = "qwertyuiolkjhgfdsazzxcvbnmQWERTYUIOPLKJHGFDSAZXCVBNM123456
 
 export abstract class ApiKeyService {
  
-
     //to create a random api key of length 32 with prefix sk-or-v1-x 
     static createRandomApiKey() {
         let suffixKey = "";
@@ -20,7 +19,6 @@ export abstract class ApiKeyService {
         id : string,    
         apiKey : string
     }> {
-
 
 
         const apiKey  = ApiKeyService.createRandomApiKey();
@@ -40,8 +38,43 @@ export abstract class ApiKeyService {
             id: apiKeyDB.id.toString(),
             apiKey,
         }
+    }
 
 
-        
+
+
+
+
+
+    static async getApiKeys(userId : number) {
+        const apiKeys = await prisma.apiKey.findMany({
+            where: {
+                userId : userId,
+            }
+        })
+
+
+        return apiKeys.map(apiKey => ({
+                id: apiKey.id.toString(),
+                apiKey: apiKey.apiKey,
+                name: apiKey.name,
+                creditsConsumed : apiKey.creditsConsumed,
+                lastUsed : apiKey.lastUsed,   
+        }))
+    }
+
+
+
+
+    static async updateApiKeyDisabled(apiKeyId : number , userId : number , disabled : boolean) {
+        const response = await prisma.apiKey.update({
+            where: {
+                id : apiKeyId,
+                userId : userId,
+            },
+            data : {
+                disabled,
+            }
+        })
     }
 }

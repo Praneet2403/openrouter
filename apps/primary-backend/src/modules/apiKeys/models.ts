@@ -24,28 +24,39 @@ export namespace ApiKeyModel {
 
 
     //schema for disabling an api key
-    export const disableApiKeySchema = t.Object({
+    export const updateApiKeySchema = t.Object({
         id : t.String(),
+        disabled : t.Boolean()
     })
-    export type disableApiKeySchema = typeof disableApiKeySchema.static
+    export type updateApiKeySchema = typeof updateApiKeySchema.static
 
 
 
 
     //response schema for disabling an api key
-    export const disableApiKeyResponseSchema = t.Object({
-        message : t.Literal("Disabled api key sucessfully")
+    export const updateApiKeyResponseSchema = t.Object({
+        message : t.Literal("updated api key sucessfully")
     })
-    export type disableApiKeyResponseSchema = typeof disableApiKeyResponseSchema.static
+    export type updateApiKeyResponseSchema = typeof updateApiKeyResponseSchema.static
+
+
+
+    export const updateApiKeyResponseFailedSchema = t.Object({
+        message : t.Literal("updating api key unsuccessful")
+    })
+    export type updateApiKeyResponseFailedSchema = typeof updateApiKeyResponseFailedSchema.static
 
 
 
     //response schema for getting all api keys
     export const getApiKeyResponseSchema = t.Object({
-        name: t.String(),
-        apiKey: t.String(),
-        lastUsed: t.String(),
-        creditsConsumed : t.String(),
+        apiKeys: t.Array(t.Object({
+            id: t.String(),
+            name: t.String(),
+            apiKey: t.String(),
+            lastUsed: t.Nullable(t.Date()),
+            creditsConsumed : t.Number(),
+        }))
         
     })
     export type getApiKeyResponseSchema = typeof getApiKeyResponseSchema.static
