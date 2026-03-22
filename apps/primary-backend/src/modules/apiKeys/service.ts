@@ -50,6 +50,7 @@ export abstract class ApiKeyService {
         const apiKeys = await prisma.apiKey.findMany({
             where: {
                 userId : userId,
+                deleted : false,
             }
         })
 
@@ -74,6 +75,20 @@ export abstract class ApiKeyService {
             },
             data : {
                 disabled,
+            }
+        })
+    }
+
+
+
+    static async delete(id : number , userId : number) {
+        const response = await prisma.apiKey.update({
+            where: {
+                id : id,
+                userId : userId,
+            },
+            data : {
+                deleted : true,
             }
         })
     }

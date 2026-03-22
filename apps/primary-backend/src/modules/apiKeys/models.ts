@@ -68,6 +68,14 @@ export namespace ApiKeyModel {
         message : t.Literal("api key deleted successfully")
     })
     export type deleteApiKeyResponseSchema = typeof deleteApiKeyResponseSchema.static
+
+
+
+
+    export const deleteApiKeyResponseFailedSchema = t.Object({
+        message : t.Literal("deleting api key unsuccessful")
+    })
+    export type deleteApiKeyResponseFailedSchema = typeof deleteApiKeyResponseFailedSchema.static
     
     
 }
