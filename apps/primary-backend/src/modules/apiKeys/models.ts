@@ -52,10 +52,11 @@ export namespace ApiKeyModel {
     export const getApiKeyResponseSchema = t.Object({
         apiKeys: t.Array(t.Object({
             id: t.String(),
-            name: t.String(),
             apiKey: t.String(),
-            lastUsed: t.Nullable(t.Date()),
+            name: t.String(),
             creditsConsumed : t.Number(),
+            lastUsed: t.Nullable(t.Date()),
+            disabled : t.Boolean(),
         }))
         
     })

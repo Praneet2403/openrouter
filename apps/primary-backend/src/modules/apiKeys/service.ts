@@ -60,7 +60,8 @@ export abstract class ApiKeyService {
                 apiKey: apiKey.apiKey,
                 name: apiKey.name,
                 creditsConsumed : apiKey.creditsConsumed,
-                lastUsed : apiKey.lastUsed,   
+                lastUsed : apiKey.lastUsed,  
+                disabled : apiKey.disabled 
         }))
     }
 
