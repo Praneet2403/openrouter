@@ -34,32 +34,26 @@ export abstract class ModelsService {
     }));
   }
 
-  static async listModelProviderMappings() {
+  /** Providers linked to one model, with per-mapping pricing. `null` if the model does not exist. */
+  static async listProvidersForModel(modelId: number) {
+    const model = await prisma.model.findUnique({
+      where: { id: modelId },
+      select: { id: true },
+    });
+    if (!model) {
+      return null;
+    }
+
     const rows = await prisma.modelProviderMapping.findMany({
-      include: {
-        model: { include: { company: true } },
-        provider: true,
-      },
-      orderBy: [{ modelId: "asc" }, { providerId: "asc" }],
+      where: { modelId },
+      include: { provider: true },
+      orderBy: { provider: { name: "asc" } },
     });
 
     return rows.map((row) => ({
-      id: row.id.toString(),
-      modelId: row.modelId.toString(),
-      providerId: row.providerId.toString(),
+      mappingId: row.id.toString(),
       inputTokenCost: row.inputTokenCost,
       outputTokenCost: row.outputTokenCost,
-      model: {
-        id: row.model.id.toString(),
-        name: row.model.name,
-        slug: row.model.slug,
-        companyId: row.model.companyId.toString(),
-        company: {
-          id: row.model.company.id.toString(),
-          name: row.model.company.name,
-          website: row.model.company.website,
-        },
-      },
       provider: {
         id: row.provider.id.toString(),
         name: row.provider.name,

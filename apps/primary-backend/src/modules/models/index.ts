@@ -28,14 +28,26 @@ export const app = new Elysia({ prefix: "models" })
     },
   )
   .get(
-    "/mappings",
-    async () => {
-      const mappings = await ModelsService.listModelProviderMappings();
-      return { mappings };
+    "/:modelId/providers",
+    async ({ params: { modelId }, status }) => {
+      const id = Number(modelId);
+      if (!Number.isFinite(id) || !Number.isInteger(id) || id < 1) {
+        return status(400, { message: "Invalid model id" as const });
+      }
+
+      const providers = await ModelsService.listProvidersForModel(id);
+      if (providers === null) {
+        return status(404, { message: "Model not found" as const });
+      }
+
+      return { providers };
     },
     {
+      params: ModelsModel.modelProvidersParamsSchema,
       response: {
-        200: ModelsModel.listMappingsResponseSchema,
+        200: ModelsModel.modelProvidersResponseSchema,
+        400: ModelsModel.invalidModelIdSchema,
+        404: ModelsModel.modelNotFoundSchema,
       },
     },
   );

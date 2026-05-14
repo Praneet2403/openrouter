@@ -20,13 +20,11 @@ const modelSchema = t.Object({
   company: companySchema,
 });
 
-const mappingSchema = t.Object({
-  id: t.String(),
-  modelId: t.String(),
-  providerId: t.String(),
+/** Provider + mapping costs for a single model (GET /models/:modelId/providers). */
+const modelProviderLinkSchema = t.Object({
+  mappingId: t.String(),
   inputTokenCost: t.Number(),
   outputTokenCost: t.Number(),
-  model: modelSchema,
   provider: providerSchema,
 });
 
@@ -42,9 +40,25 @@ export namespace ModelsModel {
   export type ListProvidersResponseSchema =
     typeof listProvidersResponseSchema.static;
 
-  export const listMappingsResponseSchema = t.Object({
-    mappings: t.Array(mappingSchema),
+  export const modelProvidersParamsSchema = t.Object({
+    modelId: t.String(),
   });
-  export type ListMappingsResponseSchema =
-    typeof listMappingsResponseSchema.static;
+  export type ModelProvidersParamsSchema =
+    typeof modelProvidersParamsSchema.static;
+
+  export const modelProvidersResponseSchema = t.Object({
+    providers: t.Array(modelProviderLinkSchema),
+  });
+  export type ModelProvidersResponseSchema =
+    typeof modelProvidersResponseSchema.static;
+
+  export const modelNotFoundSchema = t.Object({
+    message: t.Literal("Model not found"),
+  });
+  export type ModelNotFoundSchema = typeof modelNotFoundSchema.static;
+
+  export const invalidModelIdSchema = t.Object({
+    message: t.Literal("Invalid model id"),
+  });
+  export type InvalidModelIdSchema = typeof invalidModelIdSchema.static;
 }
