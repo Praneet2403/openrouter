@@ -1,25 +1,4 @@
-import { Elysia } from "elysia";
+import { app } from "./app";
 
-import { app as apiKeyApp } from "./modules/apiKeys";
-import { app as authApp } from "./modules/auth";
-import { app as modelsApp } from "./modules/models";
-import { app as paymentsApp } from "./modules/payments";
+app.listen(3000);
 
-const app = new Elysia()
-.use(authApp)
-.use(apiKeyApp)
-.use(modelsApp)
-.use(paymentsApp)
-.listen(3000);
-
-console.log(
-  `🦊 Elysia is running at ${app.server?.hostname}:${app.server?.port}`
-);
-
-
-/*
-  auth sign-in sign-up
-  api-key -> create , get , delete, disable
-  model -> get all supported models, their pricing , providers, etc.
-  payment -> razorpay/stripe
-*/
