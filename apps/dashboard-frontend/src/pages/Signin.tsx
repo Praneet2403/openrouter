@@ -10,6 +10,8 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { ErrorBanner } from "@/components/ui/alert-banner";
+import { apiErrorMessage } from "@/lib/api-error";
 import { useElysiaClient } from "@/providers/Eden";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
@@ -24,14 +26,6 @@ const signinSchema = z.object({
 });
 
 type SigninFormValues = z.infer<typeof signinSchema>;
-
-function apiErrorMessage(data: unknown, fallback: string) {
-  if (data && typeof data === "object") {
-    const raw = (data as { message?: unknown }).message;
-    if (typeof raw === "string") return raw;
-  }
-  return fallback;
-}
 
 export function Signin() {
   const client = useElysiaClient();
@@ -121,9 +115,9 @@ export function Signin() {
                 )}
               />
 
-              {form.formState.errors.root && (
-                <p className="text-sm font-medium text-destructive">{form.formState.errors.root.message}</p>
-              )}
+              {form.formState.errors.root?.message ? (
+                <ErrorBanner message={form.formState.errors.root.message} />
+              ) : null}
 
               <Button
                 type="submit"

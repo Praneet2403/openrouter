@@ -10,6 +10,8 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { ErrorBanner } from "@/components/ui/alert-banner";
+import { apiErrorMessage } from "@/lib/api-error";
 import { useElysiaClient } from "@/providers/Eden";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
@@ -47,10 +49,10 @@ export function Signup() {
         navigate("/signin", { state: { email: form.getValues("email") } });
         return;
       }
-      if (response.status === 400 && response.data && typeof response.data === "object") {
-        const raw = (response.data as { message?: unknown }).message;
-        const message = typeof raw === "string" ? raw : "Sign up failed. Try again.";
-        form.setError("root", { message });
+      if (response.status === 400 && response.data) {
+        form.setError("root", {
+          message: apiErrorMessage(response.data, "Sign up failed. Try again."),
+        });
       }
     },
     onError: () => {
@@ -105,9 +107,9 @@ export function Signup() {
                 )}
               />
 
-              {form.formState.errors.root && (
-                <p className="text-sm font-medium text-destructive">{form.formState.errors.root.message}</p>
-              )}
+              {form.formState.errors.root?.message ? (
+                <ErrorBanner message={form.formState.errors.root.message} />
+              ) : null}
 
               <Button
                 type="submit"

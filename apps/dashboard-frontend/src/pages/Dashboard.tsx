@@ -1,6 +1,8 @@
 import { DashboardShell } from "@/components/layout/DashboardShell";
+import { ErrorBanner } from "@/components/ui/alert-banner";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { fetchApiKeys } from "@/lib/fetch-api-keys";
 import { useElysiaClient } from "@/providers/Eden";
 import { useQuery } from "@tanstack/react-query";
 import { ArrowRight, Box, KeyRound, Loader2, Sparkles, Zap } from "lucide-react";
@@ -15,19 +17,16 @@ export function Dashboard() {
     queryKey: ["models"],
     queryFn: async () => {
       const { data, error } = await client.models.get();
-      if (error) throw error;
+      if (error) {
+        throw new Error("Could not load models. Is the API running on port 3000?");
+      }
       return data?.models ?? [];
     },
   });
 
   const apiKeysQuery = useQuery({
     queryKey: ["api-keys"],
-    queryFn: async () => {
-      const res = await client["api-keys"].get();
-      if (res.status === 401) return { ok: false as const };
-      if (res.status !== 200 || !res.data) throw new Error("Failed to load API keys");
-      return { ok: true as const, keys: res.data.apiKeys };
-    },
+    queryFn: () => fetchApiKeys(client),
   });
 
   useEffect(() => {
@@ -36,7 +35,7 @@ export function Dashboard() {
     }
   }, [apiKeysQuery.data, navigate]);
 
-  const keys = apiKeysQuery.data?.ok ? apiKeysQuery.data.keys : [];
+  const keys = apiKeysQuery.data?.ok ? (apiKeysQuery.data.apiKeys ?? []) : [];
   const activeKeyCount = keys.filter(k => !k.disabled).length;
   const totalCreditsConsumed = keys.reduce((sum, k) => sum + k.creditsConsumed, 0);
   const modelCount = modelsQuery.data?.length ?? 0;
@@ -48,6 +47,26 @@ export function Dashboard() {
       title="Overview"
       description="Route traffic across providers, monitor keys, and top up credits from one place."
     >
+      {apiKeysQuery.isError ? (
+        <ErrorBanner
+          message={
+            apiKeysQuery.error instanceof Error
+              ? apiKeysQuery.error.message
+              : "Could not load API keys."
+          }
+        />
+      ) : null}
+
+      {modelsQuery.isError ? (
+        <ErrorBanner
+          message={
+            modelsQuery.error instanceof Error
+              ? modelsQuery.error.message
+              : "Could not load models."
+          }
+        />
+      ) : null}
+
       <div className="grid gap-4 sm:grid-cols-3">
         <Card className="border-border/60 bg-card/50 backdrop-blur-sm">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
@@ -61,7 +80,7 @@ export function Dashboard() {
                 Loading…
               </div>
             ) : modelsQuery.isError ? (
-              <p className="text-sm text-muted-foreground">Could not load models</p>
+              <p className="text-sm text-muted-foreground">Unavailable</p>
             ) : (
               <p className="text-3xl font-bold tabular-nums">{modelCount}</p>
             )}
@@ -80,7 +99,7 @@ export function Dashboard() {
                 Loading…
               </div>
             ) : apiKeysQuery.isError ? (
-              <p className="text-sm text-muted-foreground">Could not load keys</p>
+              <p className="text-sm text-muted-foreground">Unavailable</p>
             ) : (
               <>
                 <p className="text-3xl font-bold tabular-nums">{keys.length}</p>
@@ -102,7 +121,7 @@ export function Dashboard() {
                 Loading…
               </div>
             ) : apiKeysQuery.isError ? (
-              <p className="text-sm text-muted-foreground">Could not load usage</p>
+              <p className="text-sm text-muted-foreground">Unavailable</p>
             ) : (
               <p className="text-3xl font-bold tabular-nums">{totalCreditsConsumed.toLocaleString()}</p>
             )}
