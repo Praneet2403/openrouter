@@ -38,4 +38,13 @@ export namespace AuthModel {
 
   export type signupFailedResponseSchema =
     typeof signupFailedResponseSchema.static;
+
+  export const profileResponseSchema = t.Object({
+    credits : t.Number(),
+  })
+
+  export const profileResponsErroreSchema = t.Object({
+    message : t.Literal("Error while fetching profile")
+  })
+
 }

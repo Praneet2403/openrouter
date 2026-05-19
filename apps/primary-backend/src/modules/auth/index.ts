@@ -65,4 +65,35 @@ export const app = new Elysia({ prefix: "auth" })
         403: AuthModel.signinFailureSchema,
       },
     },
-  );
+  )
+
+  .resolve(async ({cookie : {auth} , status , jwt}) => {
+        if(!auth) {
+            return status(401);
+        }
+        const decoded = await jwt.verify(auth.value as string);
+        if(!decoded || !decoded.userId) {
+            return status(401);
+        }
+
+        return {
+            userId : decoded.userId as string
+        }
+
+    })
+
+    .get("/profile" ,async ({userId, status}) => {
+      const userData = await AuthService.getUserDetails(Number(userId));
+      if(!userData) {
+        return status(400 , {
+          message : "Error while fetching profile"
+        })
+      }
+      return userData;
+      
+    }, {
+      response : {
+        200: AuthModel.profileResponseSchema,
+        400: AuthModel.profileResponsErroreSchema
+      }
+    })

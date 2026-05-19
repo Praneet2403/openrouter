@@ -25,6 +25,19 @@ export function Credits() {
     retry: false,
   });
 
+  const profileQuery = useQuery({
+    queryKey: ["profile"],
+    queryFn: async () => {
+
+      const res = await client.auth.profile.get();
+      if(res.status == 200 && res.data) {
+        return res.data;
+      }
+      throw new Error("Could not fetch profile");
+    },
+    retry: false,
+  });
+
   useEffect(() => {
     if (authQuery.data?.ok === false) {
       navigate("/signin", { replace: true });
@@ -64,6 +77,8 @@ export function Credits() {
       : authQuery.isError
         ? "Could not verify your session."
         : null;
+
+  const credits = profileQuery.data?.credits ?? 0;
 
   return (
     <DashboardShell
