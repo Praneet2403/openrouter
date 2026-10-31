@@ -1,5 +1,6 @@
 import { DashboardShell } from "@/components/layout/DashboardShell";
 import { ErrorBanner } from "@/components/ui/alert-banner";
+import CountUp from "@/components/reactbits/CountUp";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { fetchApiKeys } from "@/lib/fetch-api-keys";
@@ -68,10 +69,10 @@ export function Dashboard() {
       ) : null}
 
       <div className="grid gap-4 sm:grid-cols-3">
-        <Card className="border-border/60 bg-card/50 backdrop-blur-sm">
+        <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium text-muted-foreground">Models available</CardTitle>
-            <Box className="size-4 text-violet-400" />
+            <Box className="size-4 text-brand" />
           </CardHeader>
           <CardContent>
             {modelsQuery.isLoading ? (
@@ -82,15 +83,15 @@ export function Dashboard() {
             ) : modelsQuery.isError ? (
               <p className="text-sm text-muted-foreground">Unavailable</p>
             ) : (
-              <p className="text-3xl font-bold tabular-nums">{modelCount}</p>
+              <CountUp to={modelCount} className="block text-3xl font-semibold tracking-tight tabular-nums" />
             )}
           </CardContent>
         </Card>
 
-        <Card className="border-border/60 bg-card/50 backdrop-blur-sm">
+        <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium text-muted-foreground">API keys</CardTitle>
-            <KeyRound className="size-4 text-violet-400" />
+            <KeyRound className="size-4 text-brand" />
           </CardHeader>
           <CardContent>
             {authLoading ? (
@@ -102,17 +103,17 @@ export function Dashboard() {
               <p className="text-sm text-muted-foreground">Unavailable</p>
             ) : (
               <>
-                <p className="text-3xl font-bold tabular-nums">{keys.length}</p>
+                <CountUp to={keys.length} className="block text-3xl font-semibold tracking-tight tabular-nums" />
                 <p className="text-xs text-muted-foreground">{activeKeyCount} active</p>
               </>
             )}
           </CardContent>
         </Card>
 
-        <Card className="border-border/60 bg-card/50 backdrop-blur-sm">
+        <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium text-muted-foreground">Credits used (keys)</CardTitle>
-            <Zap className="size-4 text-amber-400" />
+            <Zap className="size-4 text-amber-500" />
           </CardHeader>
           <CardContent>
             {authLoading ? (
@@ -123,17 +124,17 @@ export function Dashboard() {
             ) : apiKeysQuery.isError ? (
               <p className="text-sm text-muted-foreground">Unavailable</p>
             ) : (
-              <p className="text-3xl font-bold tabular-nums">{totalCreditsConsumed.toLocaleString()}</p>
+              <CountUp to={totalCreditsConsumed} separator="," className="block text-3xl font-semibold tracking-tight tabular-nums" />
             )}
           </CardContent>
         </Card>
       </div>
 
       <div className="grid gap-4 md:grid-cols-2">
-        <Card className="border-border/60 bg-gradient-to-br from-violet-500/10 via-card/80 to-transparent backdrop-blur-sm transition hover:border-violet-500/30">
+        <Card>
           <CardHeader>
-            <div className="mb-2 flex size-10 items-center justify-center rounded-lg bg-violet-500/15">
-              <KeyRound className="size-5 text-violet-300" />
+            <div className="mb-2 flex size-10 items-center justify-center rounded-lg bg-brand-soft">
+              <KeyRound className="size-5 text-brand" />
             </div>
             <CardTitle>Manage API keys</CardTitle>
             <CardDescription>Create, disable, and track usage for each integration.</CardDescription>
@@ -141,7 +142,6 @@ export function Dashboard() {
           <CardContent>
             <Button
               asChild
-              className="bg-gradient-to-r from-violet-600 to-indigo-600 text-white hover:from-violet-500 hover:to-indigo-500"
             >
               <Link to="/api-keys">
                 Open API keys
@@ -151,10 +151,10 @@ export function Dashboard() {
           </CardContent>
         </Card>
 
-        <Card className="border-border/60 bg-gradient-to-br from-emerald-500/10 via-card/80 to-transparent backdrop-blur-sm transition hover:border-emerald-500/25">
+        <Card>
           <CardHeader>
-            <div className="mb-2 flex size-10 items-center justify-center rounded-lg bg-emerald-500/15">
-              <Sparkles className="size-5 text-emerald-300" />
+            <div className="mb-2 flex size-10 items-center justify-center rounded-lg bg-emerald-50">
+              <Sparkles className="size-5 text-emerald-700" />
             </div>
             <CardTitle>Add credits</CardTitle>
             <CardDescription>Top up your balance to keep requests flowing.</CardDescription>
@@ -171,7 +171,7 @@ export function Dashboard() {
       </div>
 
       {!modelsQuery.isLoading && !modelsQuery.isError && (modelsQuery.data?.length ?? 0) > 0 ? (
-        <Card className="border-border/60 bg-card/40 backdrop-blur-sm">
+        <Card>
           <CardHeader>
             <CardTitle className="text-lg">Featured models</CardTitle>
             <CardDescription>A sample of what you can call through the gateway.</CardDescription>

@@ -1,5 +1,6 @@
 import { DashboardShell } from "@/components/layout/DashboardShell";
 import { ErrorBanner, SuccessBanner } from "@/components/ui/alert-banner";
+import CountUp from "@/components/reactbits/CountUp";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { apiErrorMessage } from "@/lib/api-error";
@@ -93,20 +94,20 @@ export function Credits() {
         <SuccessBanner message={successMessage} onDismiss={() => setSuccessMessage(null)} />
       ) : null}
 
-      <Card className="border-border/60 bg-card/50 backdrop-blur-sm">
+      <Card>
         <CardHeader className="flex flex-row items-center justify-between space-y-0">
           <div>
             <CardTitle className="text-sm font-medium text-muted-foreground">Current balance</CardTitle>
             <CardDescription className="sr-only">Account credit balance</CardDescription>
           </div>
-          <Coins className="size-5 text-amber-400" />
+          <Coins className="size-5 text-amber-500" />
         </CardHeader>
         <CardContent>
           {balance === null ? (
             <p className="text-3xl font-bold text-muted-foreground">—</p>
           ) : (
-            <p className="text-4xl font-bold tabular-nums tracking-tight">
-              {balance.toLocaleString()}
+            <p className="text-4xl font-semibold tabular-nums tracking-tight">
+              <CountUp to={balance} separator="," />
               <span className="ml-2 text-lg font-normal text-muted-foreground">credits</span>
             </p>
           )}
@@ -116,10 +117,10 @@ export function Credits() {
         </CardContent>
       </Card>
 
-      <Card className="border-border/60 bg-gradient-to-br from-emerald-500/10 via-card/80 to-transparent backdrop-blur-sm">
+      <Card>
         <CardHeader>
-          <div className="mb-2 flex size-10 items-center justify-center rounded-lg bg-emerald-500/15">
-            <Sparkles className="size-5 text-emerald-300" />
+          <div className="mb-2 flex size-10 items-center justify-center rounded-lg bg-emerald-50">
+            <Sparkles className="size-5 text-emerald-700" />
           </div>
           <CardTitle>Add credits</CardTitle>
           <CardDescription>
@@ -139,7 +140,6 @@ export function Credits() {
               onrampMutation.mutate();
             }}
             disabled={onrampMutation.isPending || authQuery.isLoading}
-            className="bg-gradient-to-r from-violet-600 to-indigo-600 text-white hover:from-violet-500 hover:to-indigo-500"
           >
             {onrampMutation.isPending ? (
               <>
