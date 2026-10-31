@@ -1,6 +1,6 @@
 import Anthropic from "@anthropic-ai/sdk";
 import { Messages } from "../types";
-import { BaseLlm, LlmResponse } from "./base";
+import { BaseLlm, LlmResponse } from "./Base";
 import { TextBlock } from "@anthropic-ai/sdk/resources";
 
 const client = new Anthropic({ apiKey: process.env.CLAUDE_API_KEY });

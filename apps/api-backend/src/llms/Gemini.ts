@@ -1,5 +1,5 @@
 import { Messages } from "../types";
-import { BaseLlm, LlmResponse } from "./base";
+import { BaseLlm, LlmResponse } from "./Base";
 import { GoogleGenAI } from "@google/genai";
 
 const ai = new GoogleGenAI({
@@ -10,20 +10,22 @@ export class Gemini extends BaseLlm {
     static async chat(model : string ,messages: Messages): Promise<LlmResponse> {
         const response = await ai.models.generateContent({
             model: model,
-            contents: messages.map(message => ({
-                text: message.content,
-                role: message.role
-            }))
+            contents: messages.map(message => {
+                return {
+                    role: message.role === "assistant" ? "model" : message.role,
+                    parts: [{ text: message.content }]
+                }
+            })
         });
         
 
         return {
-            outputTokenConsumed : response.usageMetadata?.candidatesTokenCount!,
-            inputTokenConsumed : response.usageMetadata?.promptTokenCount!,
+            outputTokenConsumed : response.usageMetadata?.candidatesTokenCount ?? 0,
+            inputTokenConsumed : response.usageMetadata?.promptTokenCount ?? 0,
             completions: {
                 choices: [{
                     message: {
-                        content: response.text!
+                        content: response.text ?? ""
                     }
                 }]
             }
