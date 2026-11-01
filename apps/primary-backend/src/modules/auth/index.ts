@@ -51,6 +51,7 @@ export const app = new Elysia({ prefix: "auth" })
           maxAge: 886400 * 7,
           sameSite: "lax",
           path: "/",
+          secure: process.env.NODE_ENV === "production",
         })
         return { message : "Signed in successfully" };
       } else {
