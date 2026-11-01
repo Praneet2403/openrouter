@@ -6,9 +6,16 @@ import { createContext, useContext } from "react";
 const apiUrl =
   window.location.hostname === "localhost" ? "localhost:3000" : `${window.location.origin}/api`;
 
+type ClerkWindow = Window & {
+  Clerk?: { session?: { getToken(): Promise<string | null> } | null };
+};
+
 export const client = treaty<App>(apiUrl, {
-  fetch: {
-    credentials: "include",
+  // Clerk's script exposes the signed-in session on window.Clerk; send its
+  // short-lived token with every request so the API can verify who's calling
+  headers: async () => {
+    const token = await (window as ClerkWindow).Clerk?.session?.getToken();
+    return token ? { authorization: `Bearer ${token}` } : undefined;
   },
 });
 

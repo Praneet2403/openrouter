@@ -148,6 +148,8 @@ const result = await build({
   minify: true,
   target: "browser",
   sourcemap: "linked",
+  // inline BUN_PUBLIC_* vars (the Clerk publishable key) into the client bundle
+  env: "BUN_PUBLIC_*",
   define: {
     "process.env.NODE_ENV": JSON.stringify("production"),
   },

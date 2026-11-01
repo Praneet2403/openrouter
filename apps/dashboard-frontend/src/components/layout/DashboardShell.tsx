@@ -1,5 +1,6 @@
 import { Logo } from "@/components/brand/Logo";
 import { cn } from "@/lib/utils";
+import { UserButton } from "@clerk/clerk-react";
 import { CreditCard, KeyRound, LayoutDashboard } from "lucide-react";
 import { Link, useLocation } from "react-router";
 
@@ -47,10 +48,11 @@ export function DashboardShell({ children, title, description }: DashboardShellP
         <aside className="sticky top-0 hidden h-screen w-60 shrink-0 border-r border-border bg-white py-6 md:flex md:flex-col">
           <Logo className="mb-10 px-5" />
           <NavLinks className="flex-col px-3" />
-          <div className="mt-auto px-5 pt-8">
+          <div className="mt-auto space-y-4 px-5 pt-8">
+            <UserButton showName />
             <Link
               to="/"
-              className="text-xs font-medium text-muted-foreground transition-colors hover:text-foreground"
+              className="block text-xs font-medium text-muted-foreground transition-colors hover:text-foreground"
             >
               ← Back to site
             </Link>
@@ -59,7 +61,10 @@ export function DashboardShell({ children, title, description }: DashboardShellP
 
         <div className="flex min-w-0 flex-1 flex-col">
           <header className="border-b border-border bg-white/80 px-4 py-3 backdrop-blur-md md:hidden">
-            <Logo className="mb-3" />
+            <div className="mb-3 flex items-center justify-between">
+              <Logo />
+              <UserButton />
+            </div>
             <NavLinks className="overflow-x-auto pb-1" />
           </header>
 

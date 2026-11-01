@@ -1,34 +1,29 @@
 import { prisma } from "../../../../../packages/db"
-import jwt from "@elysiajs/jwt"
 
 export abstract class AuthService {
-    static async signup(email : string, password : string) : Promise<string>{
-        const user = await prisma.user.create({
-            data: {
-                email,
-                password : await Bun.password.hash(password) 
-            },
-        });
-        return user.id.toString()
-    }
-
-    static async signin(email : string, password : string) : Promise<{correctCredentials:boolean, userId?:string}>{
-
-         const user = await prisma.user.findFirst({
-            where : {
-                email
-            }
-         })
-
-        if(!user) {
-            return {correctCredentials:false}
+    //first request from a Clerk user links them to the account with the same
+    //email (created before Clerk) or creates a new one
+    static async findOrCreateClerkUser(clerkId : string, getEmail : () => Promise<string | undefined>) : Promise<number> {
+        const existing = await prisma.user.findUnique({
+            where : { clerkId },
+            select : { id : true }
+        })
+        if(existing) {
+            return existing.id
         }
 
-        if(!await Bun.password.verify(password, user.password)) {
-            return {correctCredentials:false}
+        const email = await getEmail()
+        if(!email) {
+            throw new Error(`Clerk user ${clerkId} has no email address`)
         }
 
-        return {correctCredentials:true, userId:user.id.toString()}
+        const user = await prisma.user.upsert({
+            where : { email },
+            update : { clerkId },
+            create : { email, clerkId },
+            select : { id : true }
+        })
+        return user.id
     }
 
     static async getUserDetails(id: number ) {

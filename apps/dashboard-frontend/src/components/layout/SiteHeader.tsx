@@ -1,6 +1,7 @@
 import { Logo } from "@/components/brand/Logo";
 import ShinyText from "@/components/reactbits/ShinyText";
 import { Button } from "@/components/ui/button";
+import { SignedIn, SignedOut, UserButton } from "@clerk/clerk-react";
 import { Sparkles } from "lucide-react";
 import { Link } from "react-router";
 
@@ -46,15 +47,23 @@ export function SiteHeader() {
         </nav>
 
         <div className="flex items-center gap-2 sm:gap-6">
-          <Link
-            to="/signin"
-            className="hidden text-[15px] font-medium text-foreground/85 transition-colors hover:text-foreground sm:inline"
-          >
-            Sign in
-          </Link>
-          <Button asChild className="h-10 rounded-lg px-5 text-[15px]">
-            <Link to="/signup">Get API key</Link>
-          </Button>
+          <SignedOut>
+            <Link
+              to="/signin"
+              className="hidden text-[15px] font-medium text-foreground/85 transition-colors hover:text-foreground sm:inline"
+            >
+              Sign in
+            </Link>
+            <Button asChild className="h-10 rounded-lg px-5 text-[15px]">
+              <Link to="/signup">Get API key</Link>
+            </Button>
+          </SignedOut>
+          <SignedIn>
+            <Button asChild className="h-10 rounded-lg px-5 text-[15px]">
+              <Link to="/dashboard">Dashboard</Link>
+            </Button>
+            <UserButton />
+          </SignedIn>
         </div>
       </div>
     </header>
