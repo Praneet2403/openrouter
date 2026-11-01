@@ -1,4 +1,4 @@
-import { prisma } from "db"
+import { prisma } from "../../../../../packages/db"
 import jwt from "@elysiajs/jwt"
 
 export abstract class AuthService {

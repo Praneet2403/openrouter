@@ -1,4 +1,4 @@
-import { prisma } from "db";
+import { prisma } from "../../../../../packages/db";
 
 const ONRAMP_CREDITS = 1000;
 

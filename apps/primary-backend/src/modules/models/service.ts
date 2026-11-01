@@ -1,4 +1,4 @@
-import { prisma } from "db";
+import { prisma } from "../../../../../packages/db";
 
 export abstract class ModelsService {
   static async listModels() {

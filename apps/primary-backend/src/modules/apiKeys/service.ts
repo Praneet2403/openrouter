@@ -1,4 +1,4 @@
-import { prisma } from "db"
+import { prisma } from "../../../../../packages/db"
 const API_KEY_LENGTH = 32;
 const ALPHABET_SET = "qwertyuiolkjhgfdsazzxcvbnmQWERTYUIOPLKJHGFDSAZXCVBNM1234567890";
 

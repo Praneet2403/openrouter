@@ -1,5 +1,5 @@
 import bearer from "@elysiajs/bearer";
-import { prisma } from "db"
+import { prisma } from "../../../packages/db"
 import { Elysia } from "elysia";
 import { Conversation } from "./types";
 import { Gemini } from "./llms/Gemini";
