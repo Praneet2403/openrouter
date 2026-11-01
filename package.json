@@ -14,9 +14,6 @@
     "turbo": "^2.8.9",
     "typescript": "5.9.2"
   },
-  "engines": {
-    "node": ">=18"
-  },
   "packageManager": "bun@1.2.18",
   "workspaces": [
     "apps/*",
