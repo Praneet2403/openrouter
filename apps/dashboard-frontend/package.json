@@ -11,6 +11,10 @@
     "build": "bun run build.ts"
   },
   "dependencies": {
+    "@clerk/clerk-react": "^5.61.3",
+    "@clerk/react-router": "^3.6.19",
+    "@clerk/themes": "^2.4.57",
+    "@clerk/ui": "^1.31.0",
     "@hookform/resolvers": "^4.1.0",
     "@radix-ui/react-label": "^2.1.2",
     "@radix-ui/react-select": "^2.1.6",
@@ -20,7 +24,9 @@
     "bun-plugin-tailwind": "^0.0.14",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
+    "gsap": "^3.15.0",
     "lucide-react": "^0.475.0",
+    "motion": "^12.23.12",
     "react": "^19",
     "react-dom": "^19",
     "react-hook-form": "^7.54.2",
@@ -31,8 +37,8 @@
     "zod": "^3.24.2"
   },
   "devDependencies": {
+    "@types/bun": "latest",
     "@types/react": "^19",
-    "@types/react-dom": "^19",
-    "@types/bun": "latest"
+    "@types/react-dom": "^19"
   }
 }

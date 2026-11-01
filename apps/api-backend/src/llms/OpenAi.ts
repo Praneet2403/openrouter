@@ -1,5 +1,5 @@
 import { Messages } from "../types";
-import { BaseLlm, LlmResponse } from "./base";
+import { BaseLlm, LlmResponse } from "./Base";
 import OpenAI from "openai";
 
 const client = new OpenAI({
@@ -17,8 +17,8 @@ export class OpenAi extends BaseLlm {
         });
 
         return {
-            inputTokenConsumed: response.usage?.input_tokens!,
-            outputTokenConsumed: response.usage?.output_tokens!,
+            inputTokenConsumed: response.usage?.input_tokens ?? 0,
+            outputTokenConsumed: response.usage?.output_tokens ?? 0,
             completions: {
                 choices: [{
                     message: {

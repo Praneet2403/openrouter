@@ -37,7 +37,7 @@ export function SuccessBanner({ message, className, onDismiss }: AlertBannerProp
     <div
       role="status"
       className={cn(
-        "flex items-start gap-2 rounded-lg border border-emerald-500/30 bg-emerald-500/10 px-4 py-3 text-sm text-emerald-200",
+        "flex items-start gap-2 rounded-lg border border-emerald-200 bg-emerald-50/60 px-4 py-3 text-sm text-emerald-700",
         className,
       )}
     >

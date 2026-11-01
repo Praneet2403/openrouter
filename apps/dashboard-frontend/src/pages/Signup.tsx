@@ -49,11 +49,10 @@ export function Signup() {
         navigate("/signin", { state: { email: form.getValues("email") } });
         return;
       }
-      if (response.status === 400 && response.data) {
-        form.setError("root", {
-          message: apiErrorMessage(response.data, "Sign up failed. Try again."),
-        });
-      }
+      // Eden puts non-2xx bodies on `error.value`, not `data`
+      form.setError("root", {
+        message: apiErrorMessage(response.error?.value, "Sign up failed. Try again."),
+      });
     },
     onError: () => {
       form.setError("root", { message: "Could not reach the server. Is the API running?" });
@@ -67,7 +66,7 @@ export function Signup() {
 
   return (
     <MarketingLayout className="flex min-h-[calc(100vh-8rem)] items-center justify-center">
-      <Card className="w-full max-w-md border-border/60 bg-card/60 shadow-xl shadow-violet-500/5 backdrop-blur-sm">
+      <Card className="w-full max-w-md rounded-2xl p-2 shadow-[0_2px_4px_rgba(11,13,38,0.03),0_30px_60px_-30px_rgba(11,13,38,0.25)]">
         <CardHeader className="space-y-1 text-center">
           <CardTitle className="text-2xl font-semibold tracking-tight">Create your account</CardTitle>
           <CardDescription>Start routing requests across every model in minutes.</CardDescription>
@@ -113,7 +112,7 @@ export function Signup() {
 
               <Button
                 type="submit"
-                className="w-full bg-gradient-to-r from-violet-600 to-indigo-600 text-white hover:from-violet-500 hover:to-indigo-500"
+                className="w-full"
                 disabled={signupMutation.isPending}
               >
                 {signupMutation.isPending ? (
@@ -130,7 +129,7 @@ export function Signup() {
 
           <p className="mt-6 text-center text-sm text-muted-foreground">
             Already have an account?{" "}
-            <Link to="/signin" className="font-medium text-violet-400 hover:text-violet-300 hover:underline">
+            <Link to="/signin" className="font-medium text-brand hover:underline">
               Sign in
             </Link>
           </p>

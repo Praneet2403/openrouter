@@ -10,7 +10,7 @@
     "@anthropic-ai/sdk": "^0.97.1",
     "@elysiajs/bearer": "^1.4.4",
     "@google/genai": "^2.4.0",
-    "elysia": "latest",
+    "elysia": "1.4.30",
     "openai": "^6.38.0"
   },
   "devDependencies": {

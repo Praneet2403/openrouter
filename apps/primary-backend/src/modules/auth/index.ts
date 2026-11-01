@@ -49,6 +49,8 @@ export const app = new Elysia({ prefix: "auth" })
           value: token,
           httpOnly: true,
           maxAge: 886400 * 7,
+          sameSite: "lax",
+          path: "/",
         })
         return { message : "Signed in successfully" };
       } else {

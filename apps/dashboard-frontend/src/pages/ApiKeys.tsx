@@ -176,9 +176,9 @@ export function ApiKeys() {
       ) : null}
 
       {revealedKey ? (
-        <Card className="border-emerald-500/30 bg-emerald-500/10 backdrop-blur-sm">
+        <Card className="border-emerald-200 bg-emerald-50/60">
           <CardHeader>
-            <CardTitle className="text-lg text-emerald-200">
+            <CardTitle className="text-lg text-emerald-700">
               {revealedKey.copied ? "API key saved" : "New API key — copy now"}
             </CardTitle>
             <CardDescription>
@@ -200,7 +200,7 @@ export function ApiKeys() {
                   <Copy className="size-4" />
                 </Button>
               ) : (
-                <Check className="size-5 shrink-0 text-emerald-400" />
+                <Check className="size-5 shrink-0 text-emerald-600" />
               )}
             </div>
             <Button variant="ghost" size="sm" onClick={() => setRevealedKey(null)}>
@@ -210,10 +210,10 @@ export function ApiKeys() {
         </Card>
       ) : null}
 
-      <Card className="border-border/60 bg-card/50 backdrop-blur-sm">
+      <Card>
         <CardHeader>
-          <div className="mb-2 flex size-10 items-center justify-center rounded-lg bg-violet-500/15">
-            <Plus className="size-5 text-violet-300" />
+          <div className="mb-2 flex size-10 items-center justify-center rounded-lg bg-brand-soft">
+            <Plus className="size-5 text-brand" />
           </div>
           <CardTitle>Create API key</CardTitle>
           <CardDescription>Give your key a label so you can tell integrations apart.</CardDescription>
@@ -237,7 +237,7 @@ export function ApiKeys() {
               <Button
                 type="submit"
                 disabled={createMutation.isPending}
-                className="shrink-0 bg-gradient-to-r from-violet-600 to-indigo-600 text-white hover:from-violet-500 hover:to-indigo-500 sm:mb-0"
+                className="shrink-0 sm:mb-0"
               >
                 {createMutation.isPending ? (
                   <>
@@ -256,7 +256,7 @@ export function ApiKeys() {
         </CardContent>
       </Card>
 
-      <Card className="border-border/60 bg-card/40 backdrop-blur-sm">
+      <Card>
         <CardHeader>
           <CardTitle className="text-lg">Your keys</CardTitle>
           <CardDescription>
@@ -296,7 +296,7 @@ export function ApiKeys() {
                         "rounded-full px-2.5 py-0.5 text-xs font-medium",
                         key.disabled
                           ? "bg-muted text-muted-foreground"
-                          : "bg-emerald-500/15 text-emerald-300",
+                          : "bg-emerald-50 text-emerald-700",
                       )}
                     >
                       {key.disabled ? "Disabled" : "Active"}
