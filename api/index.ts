@@ -1,11 +1,18 @@
 import { Elysia } from "elysia";
-import { app as dashboardApi } from "../apps/primary-backend/src/app";
-import { app as gateway } from "../apps/api-backend/src/app";
 
-// One Vercel Function serves both backends on the site's own origin, so the
-// auth cookie stays first-party. The gateway already owns /api/v1/*.
-const server = new Elysia()
-  .use(gateway)
-  .group("/api", app => app.use(dashboardApi));
+// TEMP diagnostic: surface which module fails to resolve on Vercel
+let server: Elysia | undefined;
+let startupError: string | undefined;
+try {
+  const { app: dashboardApi } = await import("../apps/primary-backend/src/app");
+  const { app: gateway } = await import("../apps/api-backend/src/app");
+  server = new Elysia().use(gateway).group("/api", app => app.use(dashboardApi)) as unknown as Elysia;
+} catch (e: any) {
+  startupError = JSON.stringify({ message: e?.message, specifier: e?.specifier, referrer: e?.referrer, code: e?.code });
+  console.error("startup failed:", startupError);
+}
 
-export default { fetch: server.fetch };
+export default {
+  fetch: (req: Request) =>
+    server ? server.fetch(req) : new Response(startupError ?? "startup failed", { status: 500 }),
+};
