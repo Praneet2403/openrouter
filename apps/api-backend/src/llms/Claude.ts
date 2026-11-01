@@ -3,12 +3,14 @@ import { Messages } from "../types";
 import { BaseLlm, LlmResponse } from "./Base";
 import { TextBlock } from "@anthropic-ai/sdk/resources";
 
-const client = new Anthropic({ apiKey: process.env.CLAUDE_API_KEY });
+// created on first use so a missing key only breaks Anthropic requests, not the whole API
+let client: Anthropic | undefined;
+const getClient = () => client ??= new Anthropic({ apiKey: process.env.CLAUDE_API_KEY });
 
 export class Claude extends BaseLlm {
     static async chat(model: string, messages: Messages): Promise<LlmResponse> {
 
-        const response = await client.messages.create({
+        const response = await getClient().messages.create({
             max_tokens: 2048,
             messages: messages.map(message => ({
                 role: message.role,

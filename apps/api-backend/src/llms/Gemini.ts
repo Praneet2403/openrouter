@@ -2,13 +2,13 @@ import { Messages } from "../types";
 import { BaseLlm, LlmResponse } from "./Base";
 import { GoogleGenAI } from "@google/genai";
 
-const ai = new GoogleGenAI({
-    apiKey: process.env.GOOGLE_API_KEY
-});
+// created on first use so a missing key only breaks Gemini requests, not the whole API
+let ai: GoogleGenAI | undefined;
+const getClient = () => ai ??= new GoogleGenAI({ apiKey: process.env.GOOGLE_API_KEY });
 
 export class Gemini extends BaseLlm {
     static async chat(model : string ,messages: Messages): Promise<LlmResponse> {
-        const response = await ai.models.generateContent({
+        const response = await getClient().models.generateContent({
             model: model,
             contents: messages.map(message => {
                 return {

@@ -2,13 +2,13 @@ import { Messages } from "../types";
 import { BaseLlm, LlmResponse } from "./Base";
 import OpenAI from "openai";
 
-const client = new OpenAI({
-    apiKey: process.env.OPENAI_API_KEY
-});
+// created on first use so a missing key only breaks OpenAI requests, not the whole API
+let client: OpenAI | undefined;
+const getClient = () => client ??= new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
 export class OpenAi extends BaseLlm {
     static async chat(model: string, messages: Messages): Promise<LlmResponse> {
-        const response = await client.responses.create({
+        const response = await getClient().responses.create({
             model: model,
             input: messages.map(message => ({
                 role: message.role,
