@@ -23,8 +23,19 @@ const appearance = {
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const navigate = useNavigate();
 
+  // Without a key ClerkProvider throws and the whole site goes blank; say why instead
   if (!publishableKey) {
-    throw new Error("BUN_PUBLIC_CLERK_PUBLISHABLE_KEY is not set");
+    console.error("BUN_PUBLIC_CLERK_PUBLISHABLE_KEY was not set when this site was built");
+    return (
+      <div className="flex min-h-screen items-center justify-center px-4 text-center">
+        <div>
+          <p className="text-lg font-semibold">Sign-in isn't configured</p>
+          <p className="mt-2 text-sm text-muted-foreground">
+            This build is missing its Clerk publishable key. Add it to the environment and redeploy.
+          </p>
+        </div>
+      </div>
+    );
   }
 
   return (

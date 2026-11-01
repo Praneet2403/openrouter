@@ -139,7 +139,7 @@ export function Landing() {
             </div>
           ) : modelsQuery.isError ? (
             <p className="py-16 text-center text-sm text-muted-foreground">
-              Models will appear here when the API is running on port 3000.
+              Couldn't load the model list right now. Please try again shortly.
             </p>
           ) : previewModels.length === 0 ? (
             <p className="py-16 text-center text-sm text-muted-foreground">No models available yet.</p>

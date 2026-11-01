@@ -19,7 +19,7 @@ export async function fetchApiKeys(client: Client): Promise<ApiKeysQueryData> {
   const res = await client["api-keys"].get();
   if (res.status === 401) return { ok: false };
   if (res.status !== 200 || !res.data) {
-    throw new Error("Could not load API keys. Make sure you are signed in and the API is running on port 3000.");
+    throw new Error("Could not load your API keys. Please refresh the page.");
   }
   return { ok: true, apiKeys: res.data.apiKeys ?? [] };
 }

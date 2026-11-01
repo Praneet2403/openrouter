@@ -1,3 +1,4 @@
+import { SessionRejectedBanner } from "@/components/auth/SessionRejectedBanner";
 import { DashboardShell } from "@/components/layout/DashboardShell";
 import { ErrorBanner } from "@/components/ui/alert-banner";
 import CountUp from "@/components/reactbits/CountUp";
@@ -7,19 +8,17 @@ import { fetchApiKeys } from "@/lib/fetch-api-keys";
 import { useElysiaClient } from "@/providers/Eden";
 import { useQuery } from "@tanstack/react-query";
 import { ArrowRight, Box, KeyRound, Loader2, Sparkles, Zap } from "lucide-react";
-import { useEffect } from "react";
-import { Link, useNavigate } from "react-router";
+import { Link } from "react-router";
 
 export function Dashboard() {
   const client = useElysiaClient();
-  const navigate = useNavigate();
 
   const modelsQuery = useQuery({
     queryKey: ["models"],
     queryFn: async () => {
       const { data, error } = await client.models.get();
       if (error) {
-        throw new Error("Could not load models. Is the API running on port 3000?");
+        throw new Error("Could not load models. Please refresh the page.");
       }
       return data?.models ?? [];
     },
@@ -29,12 +28,6 @@ export function Dashboard() {
     queryKey: ["api-keys"],
     queryFn: () => fetchApiKeys(client),
   });
-
-  useEffect(() => {
-    if (apiKeysQuery.data?.ok === false) {
-      navigate("/signin", { replace: true });
-    }
-  }, [apiKeysQuery.data, navigate]);
 
   const keys = apiKeysQuery.data?.ok ? (apiKeysQuery.data.apiKeys ?? []) : [];
   const activeKeyCount = keys.filter(k => !k.disabled).length;
@@ -48,6 +41,8 @@ export function Dashboard() {
       title="Overview"
       description="Route traffic across providers, monitor keys, and top up credits from one place."
     >
+      {apiKeysQuery.data?.ok === false ? <SessionRejectedBanner /> : null}
+
       {apiKeysQuery.isError ? (
         <ErrorBanner
           message={

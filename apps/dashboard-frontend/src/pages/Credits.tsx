@@ -1,65 +1,50 @@
+import { SessionRejectedBanner } from "@/components/auth/SessionRejectedBanner";
 import { DashboardShell } from "@/components/layout/DashboardShell";
 import { ErrorBanner, SuccessBanner } from "@/components/ui/alert-banner";
 import CountUp from "@/components/reactbits/CountUp";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { apiErrorMessage } from "@/lib/api-error";
-import { fetchApiKeys } from "@/lib/fetch-api-keys";
 import { useElysiaClient } from "@/providers/Eden";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Coins, Loader2, Sparkles } from "lucide-react";
-import { useEffect, useState } from "react";
-import { useNavigate } from "react-router";
+import { useState } from "react";
 
 const ONRAMP_AMOUNT = 1000;
 
+type ProfileQueryData = { ok: false } | { ok: true; credits: number };
+
 export function Credits() {
   const client = useElysiaClient();
-  const navigate = useNavigate();
-  const [balance, setBalance] = useState<number | null>(null);
+  const queryClient = useQueryClient();
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
-  const authQuery = useQuery({
-    queryKey: ["api-keys"],
-    queryFn: () => fetchApiKeys(client),
-    retry: false,
-  });
-
   const profileQuery = useQuery({
     queryKey: ["profile"],
-    queryFn: async () => {
-
+    queryFn: async (): Promise<ProfileQueryData> => {
       const res = await client.auth.profile.get();
-      if(res.status == 200 && res.data) {
-        return res.data;
+      if (res.status === 401) return { ok: false };
+      if (res.status === 200 && res.data) {
+        return { ok: true, credits: res.data.credits };
       }
-      throw new Error("Could not fetch profile");
+      throw new Error("Could not load your balance. Please refresh the page.");
     },
     retry: false,
   });
-
-  useEffect(() => {
-    if (authQuery.data?.ok === false) {
-      navigate("/signin", { replace: true });
-    }
-  }, [authQuery.data, navigate]);
 
   const onrampMutation = useMutation({
     mutationFn: async () => {
       const res = await client.payments.onramp.post({});
-      if (res.status === 401) {
-        navigate("/signin", { replace: true });
-        throw new Error("You are not signed in. Please sign in and try again.");
-      }
       if (res.status === 200 && res.data) {
         return res.data;
       }
-      throw new Error(apiErrorMessage(res.data, "Could not add credits. Please try again."));
+      // Eden puts non-2xx bodies on `error.value`, not `data`
+      throw new Error(apiErrorMessage(res.error?.value, "Could not add credits. Please try again."));
     },
     onSuccess: data => {
       setErrorMessage(null);
-      setBalance(data.credits);
+      queryClient.setQueryData<ProfileQueryData>(["profile"], { ok: true, credits: data.credits });
       setSuccessMessage(
         `Successfully added ${ONRAMP_AMOUNT.toLocaleString()} credits. Your new balance is ${data.credits.toLocaleString()} credits.`,
       );
@@ -72,21 +57,16 @@ export function Credits() {
     },
   });
 
-  const authError =
-    authQuery.error instanceof Error
-      ? authQuery.error.message
-      : authQuery.isError
-        ? "Could not verify your session."
-        : null;
-
-  const credits = profileQuery.data?.credits ?? 0;
+  const sessionRejected = profileQuery.data?.ok === false;
+  const balance = profileQuery.data?.ok ? profileQuery.data.credits : null;
 
   return (
     <DashboardShell
       title="Credits"
       description="Top up your balance to pay for model requests across providers."
     >
-      {authError ? <ErrorBanner message={authError} /> : null}
+      {sessionRejected ? <SessionRejectedBanner /> : null}
+      {profileQuery.isError ? <ErrorBanner message={profileQuery.error.message} /> : null}
       {errorMessage ? (
         <ErrorBanner message={errorMessage} onDismiss={() => setErrorMessage(null)} />
       ) : null}
@@ -103,7 +83,12 @@ export function Credits() {
           <Coins className="size-5 text-amber-500" />
         </CardHeader>
         <CardContent>
-          {balance === null ? (
+          {profileQuery.isLoading ? (
+            <div className="flex items-center gap-2 py-2 text-sm text-muted-foreground">
+              <Loader2 className="size-4 animate-spin" />
+              Loading balance…
+            </div>
+          ) : balance === null ? (
             <p className="text-3xl font-bold text-muted-foreground">—</p>
           ) : (
             <p className="text-4xl font-semibold tabular-nums tracking-tight">
@@ -112,7 +97,7 @@ export function Credits() {
             </p>
           )}
           <p className="mt-2 text-sm text-muted-foreground">
-            Balance updates after you add credits below.
+            Credits are spent as you call models through the gateway.
           </p>
         </CardContent>
       </Card>
@@ -139,7 +124,7 @@ export function Credits() {
               setErrorMessage(null);
               onrampMutation.mutate();
             }}
-            disabled={onrampMutation.isPending || authQuery.isLoading}
+            disabled={onrampMutation.isPending || profileQuery.isLoading || sessionRejected}
           >
             {onrampMutation.isPending ? (
               <>
@@ -153,9 +138,6 @@ export function Credits() {
               </>
             )}
           </Button>
-          {authQuery.isLoading ? (
-            <p className="text-sm text-muted-foreground">Checking your session…</p>
-          ) : null}
         </CardContent>
       </Card>
     </DashboardShell>

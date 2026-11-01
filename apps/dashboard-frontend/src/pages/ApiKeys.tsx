@@ -1,3 +1,4 @@
+import { SessionRejectedBanner } from "@/components/auth/SessionRejectedBanner";
 import { DashboardShell } from "@/components/layout/DashboardShell";
 import { ErrorBanner, SuccessBanner } from "@/components/ui/alert-banner";
 import { Button } from "@/components/ui/button";
@@ -19,9 +20,8 @@ import { useElysiaClient } from "@/providers/Eden";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Check, Copy, KeyRound, Loader2, Plus, Power, Trash2 } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
-import { useNavigate } from "react-router";
 import { z } from "zod";
 
 const createKeySchema = z.object({
@@ -46,7 +46,6 @@ function formatLastUsed(value: Date | string | null) {
 
 export function ApiKeys() {
   const client = useElysiaClient();
-  const navigate = useNavigate();
   const queryClient = useQueryClient();
   const [revealedKey, setRevealedKey] = useState<RevealedKey | null>(null);
   const [actionError, setActionError] = useState<string | null>(null);
@@ -61,12 +60,6 @@ export function ApiKeys() {
     queryKey: ["api-keys"],
     queryFn: () => fetchApiKeys(client),
   });
-
-  useEffect(() => {
-    if (keysQuery.data?.ok === false) {
-      navigate("/signin", { replace: true });
-    }
-  }, [keysQuery.data, navigate]);
 
   const createMutation = useMutation({
     mutationFn: async (name: string) => {
@@ -167,6 +160,7 @@ export function ApiKeys() {
       title="API keys"
       description="Create and manage keys for authenticating requests to the gateway."
     >
+      {keysQuery.data?.ok === false ? <SessionRejectedBanner /> : null}
       {loadError ? <ErrorBanner message={loadError} /> : null}
       {actionError ? (
         <ErrorBanner message={actionError} onDismiss={() => setActionError(null)} />
